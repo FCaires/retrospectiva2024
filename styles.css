@@ -1,5 +1,8 @@
 :root {
   --primary-color: #0073f4;
+  --light-gray: #f9f9f9;
+  --medium-gray: #e5e5e5;
+  --dark-gray: rgb(20, 24, 27);
 }
 
 * {
@@ -129,6 +132,7 @@
 }
 
 .rides-content {
+  background-color: var(--dark-gray);
   height: 564px;
   width: 100%;
   display: flex;
@@ -136,6 +140,7 @@
   flex-direction: column;
   align-items: center;
   font-weight: bold;
+  color: var(--medium-gray);
   h1 {
     margin-top: 112px;
   }
@@ -156,7 +161,7 @@
 
 @media (max-width: 600px) {
   .rides-content {
-    height: 864px;
+    height: 800px;
     display: flex;
     justify-content: flex-start;
     flex-direction: column;
@@ -236,6 +241,8 @@
 }
 
 .days-content {
+  background-color: var(--dark-gray);
+  color: white;
   padding: 50px 0px;
   width: 100%;
   height: 773px;
@@ -247,8 +254,13 @@
 
 @media (max-width: 900px) {
   .days-content {
-    margin-top: -100px;
     height: 1500px;
+  }
+}
+
+@media (max-width: 550px) {
+  .days-content {
+    height: 1700px;
   }
 }
 
@@ -261,6 +273,7 @@
     width: 90%;
     text-align: center;
     height: 116px;
+    color: var(--medium-gray);
   }
 
   span {
@@ -306,6 +319,7 @@
   margin-top: 10px;
   width: 50%;
   text-align: center;
+  color: var(--medium-gray);
 }
 
 @media (max-width: 600px) {
@@ -352,7 +366,12 @@
   height: 100%;
   width: 25%;
 
+  h2 {
+    color: var(--primary-color);
+  }
+
   p {
+    color: var(--light-gray);
     margin-top: 10px;
     width: 80%;
     font-size: 14px;
@@ -395,6 +414,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-top: 50px;
 }
 
 @media (max-width: 900px) {
@@ -404,14 +424,13 @@
 }
 @media (max-width: 600px) {
   .rating-content {
-    margin-top: 100px;
     justify-content: center;
   }
 }
 
 @media (max-width: 450px) {
   .rating-content {
-    margin-top: 200px;
+    margin-top: 50px;
   }
 }
 
@@ -538,10 +557,9 @@
 
 .horizontal-line {
   width: 100%;
-  height: 2px;
-  background-color: rgb(231, 231, 231); /* Cor clara */
-  border-radius: 1px; /* Arredonda ligeiramente as bordas */
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra sutil */
+  height: 5px;
+  /* background-color: rgb(200, 200, 200); */
+  background-color: var(--primary-color);
 }
 
 ::-webkit-scrollbar {
@@ -549,7 +567,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
   border-radius: 6px;
 }
 
