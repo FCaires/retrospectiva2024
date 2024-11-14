@@ -10,6 +10,11 @@
     />
 
     <title>Restrospectiva Mobapps 2024</title>
+    <style>
+      :root {
+        --primary-color: #0073f4;
+      }
+    </style>
   </head>
   <body>
     <div class="main-content">
@@ -41,38 +46,41 @@
         </div>
       </div>
       <div class="rides-content">
-        <h1>Você fez um total de <span>50 viagens</span> em 2024!</h1>
+        <h1>
+          Você fez um total de
+          <span id="total-rides">[totalRides]</span> <span>viagens</span> em
+          2024!
+        </h1>
         <div class="rides-info-content">
           <div class="rides-info-card-content">
-            <img src="./assets/car.png" alt="" />
+            <img src="./assets/carro.svg" alt="" />
             <h2>
-              Você percorreu <span>impressionantes 1.200 km</span> ao longo do
-              ano.
+              Você percorreu
+              <span
+                >impressionantes <span id="total-km">[totalKm]</span> km</span
+              >
+              ao longo do ano.
             </h2>
             <p>Agradecemos sua confiança de está conosco nessa jornada!</p>
           </div>
           <div class="rides-info-card-content">
-            <img src="./assets/pagamento.png" alt="" />
+            <img src="./assets/digital-payment.png" alt="" />
             <h2>
               Seu método de pagamento favorito é o
-              <span>cartão de crédito</span>.
+              <span id="payment-method">[paymentMethod]</span>.
             </h2>
             <p>Você é um verdadeiro farol, sempre pronto para a aventura!</p>
           </div>
           <div class="rides-info-card-content">
-            <img src="./assets/marcador.png" alt="" />
+            <img src="./assets/localizador-de-mapa.png" alt="" />
             <h2>
               O seu <span>primeiro destino em 2024</span> junto a nossa
               plataforma foi:
             </h2>
-            <p>
-              Av. Tancredo Neves, 148 - Caminho das Árvores, Salvador - BA,
-              41820-020
-            </p>
+            <p id="first-destination">[firstDestination]</p>
           </div>
         </div>
       </div>
-      <div class="horizontal-line"></div>
       <div class="days-content">
         <div class="days-title-content">
           <h1>
@@ -80,7 +88,7 @@
             dias você esteve presente com a Mobapps? Descubra agora:
             <br />
             <br />
-            <span>1.350 dias</span>
+            <span id="total-days">[totalDays]</span> <span>dias</span>
           </h1>
         </div>
         <div class="days-p-content">
@@ -105,12 +113,7 @@
             <h2>Agradecemos sua presença</h2>
             <p>Sua confiança é fundamental para nós!</p>
           </div>
-          <div class="days-info-card-2">
-            <img
-              src="./assets/photo_4992588681042833291_x.jpg"
-              alt="placeholder"
-            />
-          </div>
+          <div class="days-info-card-2" id="svgContainer"></div>
           <div class="days-info-card-1">
             <img src="./assets/explorar.png" alt="" />
             <h2>Vamos explorar mais sobre suas experiências na plataforma!</h2>
@@ -131,7 +134,7 @@
         <div class="rating-value">
           <img src="./assets/estrela.png" alt="" />
           <h1>
-            <span class="rating-value-color">4,9</span>
+            <span class="rating-value-color" id="ratings">[ratings]</span>
             de avaliações na plataforma <br />;)
           </h1>
           <br />
@@ -168,10 +171,42 @@
     </div>
 
     <script>
+      const root = document.documentElement;
       const username = "Pedro";
+      const primaryColor = getComputedStyle(root)
+        .getPropertyValue("--primary-color")
+        .trim();
+      const totalRides = "50";
+      const totalKm = "1.200";
+      const paymentMethod = "cartão de crédito";
+      const firstDestination =
+        "Av. Tancredo Neves, 148 - Caminho das Árvores, Salvador - BA, 41820-020";
+      const totalDay = "1.350";
+      const ratings = "4,9";
 
       document.getElementById("username-display").textContent = username;
       document.getElementById("username-display2").textContent = username;
+      document.getElementById("total-rides").textContent = totalRides;
+      document.getElementById("total-km").textContent = totalKm;
+      document.getElementById("payment-method").textContent = paymentMethod;
+      document.getElementById("first-destination").textContent =
+        firstDestination;
+      document.getElementById("total-days").textContent = totalDay;
+      document.getElementById("ratings").textContent = ratings;
+
+      fetch("./assets/10594481_4482349.svg")
+        .then((response) => response.text())
+        .then((svgData) => {
+          document.getElementById("svgContainer").innerHTML = svgData;
+          const svgElement = document.querySelector("#svgContainer svg");
+
+          svgElement.querySelectorAll('[style*="fill"]').forEach((element) => {
+            if (element.style.fill === "red") {
+              element.style.fill = primaryColor;
+            }
+          });
+        })
+        .catch((error) => console.error("Erro ao carregar o SVG:", error));
     </script>
   </body>
 </html>
