@@ -8,6 +8,7 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <title>Restrospectiva Mobapps 2024</title>
     <style>
@@ -19,10 +20,7 @@
   <body>
     <div class="main-content">
       <div class="header-content">
-        <img
-          src="./assets/Logo-Mobapps-Azul-Fundo Transparente .png 1.png"
-          alt="logo"
-        />
+        <img src="./assets/index/logo.png" alt="logo" />
       </div>
       <div class="resume-content">
         <div class="resume-title-content">
@@ -39,7 +37,7 @@
           </div>
           <div class="resume-img">
             <img
-              src="./assets/illustration-man-using-gesture-control-car-modern-technology-innovation-concept 1.png"
+              src="./assets/index/illustration-man-using-gesture-control-car-modern-technology-innovation-concept 1.png"
               alt="illustration-man-using-gesture-control-car-modern-technology"
             />
           </div>
@@ -53,7 +51,7 @@
         </h1>
         <div class="rides-info-content">
           <div class="rides-info-card-content">
-            <img src="./assets/carro.svg" alt="" />
+            <img src="./assets/index/carro.svg" alt="" />
             <h2>
               Você percorreu
               <span
@@ -64,7 +62,7 @@
             <p>Agradecemos sua confiança de está conosco nessa jornada!</p>
           </div>
           <div class="rides-info-card-content">
-            <img src="./assets/digital-payment.png" alt="" />
+            <img src="./assets/index/digital-payment.png" alt="" />
             <h2>
               Seu método de pagamento favorito é o
               <span id="payment-method">[paymentMethod]</span>.
@@ -72,7 +70,7 @@
             <p>Você é um verdadeiro farol, sempre pronto para a aventura!</p>
           </div>
           <div class="rides-info-card-content">
-            <img src="./assets/localizador-de-mapa.png" alt="" />
+            <img src="./assets/index/localizador-de-mapa.png" alt="" />
             <h2>
               O seu <span>primeiro destino em 2024</span> junto a nossa
               plataforma foi:
@@ -99,14 +97,14 @@
         </div>
         <div class="days-info-content">
           <div class="days-info-card-1">
-            <img src="./assets/relogio.png" alt="" />
+            <img src="./assets/index/relogio.png" alt="" />
             <h2>Seu tempo na plataforma</h2>
             <p>
               Não se preocupe se tem muito ou pouco tempo, com a nossa
               plataforma todo dia uma nova jornada se inicia!
             </p>
             <img
-              src="./assets/comparecimento.png"
+              src="./assets/index/comparecimento.png"
               alt=""
               style="margin-top: 80px"
             />
@@ -115,10 +113,14 @@
           </div>
           <div class="days-info-card-2" id="svgContainer"></div>
           <div class="days-info-card-1">
-            <img src="./assets/explorar.png" alt="" />
+            <img src="./assets/index/explorar.png" alt="" />
             <h2>Vamos explorar mais sobre suas experiências na plataforma!</h2>
             <p>A cada viagem, você faz parte da nossa história de sucesso.</p>
-            <img src="./assets/maos.png" alt="" style="margin-top: 80px" />
+            <img
+              src="./assets/index/maos.png"
+              alt=""
+              style="margin-top: 80px"
+            />
             <h2>Vamos em frente!</h2>
             <p>Juntos, podemos alcançar novos destinos!</p>
           </div>
@@ -132,7 +134,7 @@
           </h1>
         </div>
         <div class="rating-value">
-          <img src="./assets/estrela.png" alt="" />
+          <img src="./assets/index/estrela.png" alt="" />
           <h1>
             <span class="rating-value-color" id="ratings">[ratings]</span>
             de avaliações na plataforma <br />;)
@@ -152,23 +154,38 @@
         </div>
         <div class="footer-info-content">
           <div class="rides-info-card-content">
-            <img src="./assets/desempenho.png" alt="" />
+            <img src="./assets/index/desempenho.png" alt="" />
             <h2>Seu desempenho foi admirável este ano!</h2>
           </div>
           <div class="rides-info-card-content">
-            <img src="./assets/aperto-de-mao.png" alt="" />
+            <img src="./assets/index/aperto-de-mao.png" alt="" />
             <h2>Agradecemos por fazer parte da nossa jornada!</h2>
           </div>
           <div class="rides-info-card-content">
-            <img src="./assets/lancamento-de-foguete-fofo.png" alt="" />
+            <img src="./assets/index/lancamento-de-foguete-fofo.png" alt="" />
             <h2>Continue acelerando rumo ao sucesso em 2025!</h2>
           </div>
         </div>
         <div class="footer-btn-content">
-          <button class="btn">Compartilhe nas suas redes sociais ></button>
+          <button
+            class="btn"
+            id="shareButton"
+            onclick="gerarMultiplosStories()"
+          >
+            Compartilhe nas suas redes sociais >
+          </button>
         </div>
       </div>
     </div>
+
+    <div id="popup" class="popup">
+      <div class="popup-content">
+        <h2>Imagens baixadas com sucesso!</h2>
+        <p>Compartilhe nas suas redes sociais e inspire outras pessoas!</p>
+        <button onclick="fecharPopup()">Fechar</button>
+      </div>
+    </div>
+    <div id="popup-overlay" class="popup-overlay" onclick="fecharPopup()"></div>
 
     <script>
       const root = document.documentElement;
@@ -194,19 +211,277 @@
       document.getElementById("total-days").textContent = totalDay;
       document.getElementById("ratings").textContent = ratings;
 
-      fetch("./assets/10594481_4482349.svg")
-        .then((response) => response.text())
-        .then((svgData) => {
-          document.getElementById("svgContainer").innerHTML = svgData;
-          const svgElement = document.querySelector("#svgContainer svg");
-
-          svgElement.querySelectorAll('[style*="fill"]').forEach((element) => {
-            if (element.style.fill === "red") {
-              element.style.fill = primaryColor;
+      function fetchVideoURL() {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            // COLOCAR O CAMINHO DO VIDEO
+            const videoURL = "./assets/videos/video-teste.mp4";
+            if (videoURL) {
+              resolve(videoURL);
+            } else {
+              reject("Vídeo não encontrado");
             }
-          });
+          }, 1000);
+        });
+      }
+
+      function loadVideo(videoURL) {
+        const container = document.getElementById("svgContainer");
+        container.innerHTML = "";
+
+        const video = document.createElement("video");
+        video.width = 540;
+        video.height = 540;
+        video.controls = true;
+        video.src = videoURL;
+
+        container.appendChild(video);
+      }
+
+      function loadSVG() {
+        const container = document.getElementById("svgContainer");
+        container.innerHTML = "";
+
+        fetch("./assets/index/10594481_4482349.svg")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Erro ao carregar o SVG");
+            }
+            return response.text();
+          })
+          .then((svgData) => {
+            container.innerHTML = svgData;
+            container.style.display = "block";
+
+            const svgElement = container.querySelector("svg");
+
+            svgElement
+              .querySelectorAll('[style*="fill"]')
+              .forEach((element) => {
+                if (element.style.fill === "red") {
+                  element.style.fill = primaryColor;
+                }
+              });
+          })
+          .catch((error) => console.error("Erro ao carregar o SVG:", error));
+      }
+
+      fetchVideoURL()
+        .then((videoURL) => {
+          if (videoURL) {
+            loadVideo(videoURL);
+          } else {
+            throw new Error("Vídeo não encontrado");
+          }
         })
-        .catch((error) => console.error("Erro ao carregar o SVG:", error));
+        .catch((error) => {
+          console.error(
+            "Erro ao carregar o vídeo, carregando SVG como fallback:",
+            error
+          );
+          loadSVG();
+        });
+
+      function mostrarPopup() {
+        document.getElementById("popup").classList.add("show");
+        document.getElementById("popup-overlay").classList.add("show");
+      }
+
+      function fecharPopup() {
+        document.getElementById("popup").classList.remove("show");
+        document.getElementById("popup-overlay").classList.remove("show");
+      }
+
+      function adicionarLogo(wrapper) {
+        const logoContainer = wrapper.querySelector("#logoContainer");
+        if (logoContainer) {
+          const logoImg = document.createElement("img");
+          logoImg.src = "assets/story1/logoStories.png";
+          logoImg.alt = "logo";
+          logoImg.width = 206;
+          logoImg.height = 68;
+
+          logoContainer.appendChild(logoImg);
+        }
+      }
+
+      function gerarImagemCompartilhamento(storyId) {
+        return new Promise((resolve, reject) => {
+          const htmlPath = `${storyId}.html`;
+          const svgPath = `assets/${storyId}/imgStory${storyId.replace(
+            "story",
+            ""
+          )}.svg`;
+          const downloadName = `${storyId}-image.png`;
+
+          fetch(htmlPath)
+            .then(async (response) => {
+              if (!response.ok) {
+                throw new Error(
+                  `Erro ao carregar ${htmlPath}: ${response.statusText}`
+                );
+              }
+              return await response.text();
+            })
+            .then((html) => {
+              const container = document.createElement("div");
+              container.style.position = "absolute";
+              container.style.top = "-9999px";
+              container.style.left = "-9999px";
+              container.style.width = "1080px";
+              container.style.height = "1920px";
+              container.style.overflow = "hidden";
+              container.style.zIndex = "-1";
+              document.body.appendChild(container);
+
+              const shadowRoot = container.attachShadow({ mode: "open" });
+
+              const wrapper = document.createElement("div");
+              wrapper.innerHTML = html;
+              shadowRoot.appendChild(wrapper);
+
+              const stylesheets = Array.from(
+                document.querySelectorAll("link[rel='stylesheet']")
+              );
+              stylesheets.forEach((stylesheet) => {
+                const link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = stylesheet.href;
+                shadowRoot.appendChild(link);
+              });
+
+              wrapper.style.setProperty("--primary-color", primaryColor);
+              adicionarLogo(wrapper);
+              const svgContainer = wrapper.querySelector("#svgContainer");
+
+              if (svgContainer) {
+                fetch(svgPath)
+                  .then((response) => {
+                    if (!response.ok) {
+                      throw new Error(`Erro ao carregar o SVG: ${svgPath}`);
+                    }
+                    return response.text();
+                  })
+                  .then((svgData) => {
+                    svgContainer.innerHTML = svgData;
+
+                    const svgElement = svgContainer.querySelector("svg");
+
+                    if (svgElement) {
+                      svgElement
+                        .querySelectorAll("[fill]")
+                        .forEach((element) => {
+                          const currentFill = element.getAttribute("fill");
+                          if (
+                            currentFill === "#0073F4" ||
+                            currentFill === "red"
+                          ) {
+                            element.setAttribute("fill", primaryColor);
+                          }
+                        });
+
+                      svgElement
+                        .querySelectorAll("[style]")
+                        .forEach((element) => {
+                          const style = element.getAttribute("style");
+                          if (style && style.includes("fill:")) {
+                            element.setAttribute(
+                              "style",
+                              style.replace(
+                                /fill: ?[^;]+;/,
+                                `fill: ${primaryColor};`
+                              )
+                            );
+                          }
+                        });
+                    }
+                  })
+                  .catch((error) =>
+                    console.error(
+                      `Erro ao carregar e modificar o SVG (${svgPath}):`,
+                      error
+                    )
+                  );
+              }
+
+              const conteudoCompartilhamento = wrapper.querySelector(
+                "#conteudo-compartilhamento"
+              );
+              if (conteudoCompartilhamento) {
+                conteudoCompartilhamento.style.backgroundColor = primaryColor;
+              }
+
+              const storiesData = {
+                totalRidesStories: "824",
+                totalKmStories: "5462",
+                totalRatingStories: "4,7",
+                totalDaysStories: "276",
+                paymentMethodStories: "Cartão",
+                firstDestinationStories:
+                  "Av. Tancredo Neves, 148 - Caminho das Árvores, Salvador - BA, 41820-020.",
+              };
+
+              Object.entries(storiesData).forEach(([id, value]) => {
+                const element = wrapper.querySelector(`#${id}`);
+                if (element) {
+                  element.innerText = value;
+                }
+              });
+
+              setTimeout(() => {
+                html2canvas(wrapper, {
+                  useCORS: true,
+                  scale: 1,
+                  width: 1080,
+                  height: 1920,
+                }).then((canvas) => {
+                  const base64Image = canvas.toDataURL("image/png");
+                  const link = document.createElement("a");
+                  link.href = base64Image;
+                  link.download = downloadName;
+                  link.click();
+
+                  document.body.removeChild(container);
+
+                  resolve();
+                });
+              }, 1000);
+            })
+            .catch((error) => {
+              alert(
+                `Houve um problema ao carregar o conteúdo da imagem ${storyId}. Por favor, tente novamente ou entre em contato com o suporte.`
+              );
+              reject(error);
+            });
+        });
+      }
+
+      function gerarMultiplosStories() {
+        const button = document.getElementById("shareButton");
+        button.classList.add("loading");
+
+        const stories = [
+          "story1",
+          "story2",
+          "story3",
+          "story4",
+          "story5",
+          "story6",
+        ];
+
+        Promise.all(stories.map((story) => gerarImagemCompartilhamento(story)))
+          .then(() => {
+            mostrarPopup();
+          })
+          .catch((error) => {
+            alert(
+              `Houve um problema ao carregar o conteúdo do ${story}. Por favor, tente novamente ou entre em contato com o suporte.`
+            );
+          })
+          .finally(() => {
+            button.classList.remove("loading");
+          });
+      }
     </script>
   </body>
 </html>

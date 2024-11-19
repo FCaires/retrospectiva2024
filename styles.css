@@ -563,3 +563,120 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-color);
 }
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.7);
+  z-index: 1000;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  opacity: 0;
+  max-width: 400px;
+  width: 90%;
+}
+
+.popup.show {
+  display: block;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.popup-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.popup-content h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: #333;
+}
+
+.popup-content p {
+  margin: 0 0 20px;
+  font-size: 16px;
+  color: #555;
+}
+
+.popup-content button {
+  background: #0073f4;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.popup-content button:hover {
+  background: #005bb5;
+}
+
+.popup-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.popup-overlay.show {
+  display: block;
+  opacity: 1;
+}
+
+.loading {
+  pointer-events: none;
+  opacity: 0.6;
+  position: relative;
+}
+
+.loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 3px solid transparent;
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+#svgContainer video {
+  height: 100%;
+  width: 540px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  #svgContainer video {
+    width: 300px;
+    height: 300px;
+    margin: 50px 50px 50px 50px;
+  }
+}
