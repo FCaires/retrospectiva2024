@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Story 3</title>
+    <style>
+      :root {
+        --primary-color: #0073f4;
+      }
+      * {
+        padding: 0;
+        margin: 0;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="conteudo-compartilhamento"
+      style="
+        width: 1080px;
+        height: 1920px;
+        background-color: #0073f4;
+        font-family: Manrope, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      "
+    >
+      <img
+        src="assets/story3/Vector.png"
+        alt=""
+        style="position: absolute; margin-left: 275px"
+      />
+      <img
+        src="assets/story3/arrow 1.png"
+        alt=""
+        style="position: absolute; margin-top: 383px; margin-right: 410px"
+      />
+      <img
+        src="assets/story3/Group 3.png"
+        alt=""
+        style="position: absolute; margin-top: 957px; margin-left: 300px"
+      />
+      <img
+        src="assets/story3/Vector-1.png"
+        alt=""
+        style="position: absolute; margin-top: 1580px; margin-right: 380px"
+      />
+      <div
+        id="svgContainer"
+        style="position: absolute; margin-top: 1329px"
+      ></div>
+      <div
+        style="
+          width: 851px;
+          height: 231px;
+          margin-top: 244px;
+          display: flex;
+          justify-content: space-between;
+        "
+      >
+        <div
+          style="
+            width: 486px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+          "
+        >
+          <h1 style="font-weight: bold; font-size: 62px">Você é incrível</h1>
+          <h1 style="font-weight: 500; font-size: 62px">
+            e a sua avaliação reflete isso!
+          </h1>
+        </div>
+        <div id="logoContainer"></div>
+      </div>
+      <div
+        style="
+          width: 448px;
+          height: 682px;
+          margin-top: 125px;
+          margin-left: 400px;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <div style="width: 313px; height: 84px">
+          <h1 style="font-weight: 500; font-size: 50px">
+            Nota total de avaliação:
+          </h1>
+        </div>
+        <div style="margin-top: 35px">
+          <h1
+            style="font-weight: bold; font-size: 215px"
+            id="totalRatingStories"
+          >
+            [totalRatingStories]
+          </h1>
+        </div>
+        <div
+          style="width: 448px; height: 100%; display: flex; align-items: end"
+        >
+          <h1 style="font-weight: 500; font-size: 50px">
+            Agradecemos por sua confiança e <br />por ser parte da nossa
+            jornada.
+          </h1>
+        </div>
+      </div>
+    </div>
+    <script>
+      const primaryColor = getComputedStyle(document.documentElement)
+        .getPropertyValue("--primary-color")
+        .trim();
+
+      function loadAndModifySVG() {
+        const svgContainer = document.getElementById("svgContainer");
+
+        fetch("assets/story3/imgStory3.svg")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Erro ao carregar o SVG");
+            }
+            return response.text();
+          })
+          .then((svgData) => {
+            svgContainer.innerHTML = svgData;
+
+            const svgElement = svgContainer.querySelector("svg");
+
+            if (svgElement) {
+              svgElement.querySelectorAll("[fill]").forEach((element) => {
+                const currentFill = element.getAttribute("fill");
+                if (currentFill === "#0073F4") {
+                  element.setAttribute("fill", primaryColor);
+                }
+              });
+
+              svgElement.querySelectorAll("[style]").forEach((element) => {
+                const style = element.getAttribute("style");
+                if (style && style.includes("fill:")) {
+                  element.setAttribute(
+                    "style",
+                    style.replace(/fill: ?[^;]+;/, `fill: ${primaryColor};`)
+                  );
+                }
+              });
+            }
+          })
+          .catch((error) =>
+            console.error("Erro ao carregar e modificar o SVG:", error)
+          );
+      }
+
+      loadAndModifySVG();
+    </script>
+  </body>
+</html>

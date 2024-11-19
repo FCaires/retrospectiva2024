@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Story 5</title>
+    <style>
+      :root {
+        --primary-color: #0073f4;
+      }
+      * {
+        padding: 0;
+        margin: 0;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="conteudo-compartilhamento"
+      style="
+        width: 1080px;
+        height: 1920px;
+        background-color: #0073f4;
+        font-family: Manrope, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      "
+    >
+      <img src="assets/story5/Vector.png" alt="" style="position: absolute" />
+      <img
+        src="assets/story5/arrow 1.png"
+        alt=""
+        style="position: absolute; margin-top: 557px; margin-right: 540px"
+      />
+      <img
+        src="assets/story5/Group.png"
+        alt=""
+        style="position: absolute; margin-top: 220px; margin-left: 1150px"
+      />
+      <div
+        id="svgContainer"
+        style="position: absolute; margin-top: 1251px"
+      ></div>
+      <img
+        src="assets/story5/Vector-1.png"
+        alt=""
+        style="position: absolute; margin-top: 1120px; margin-left: 830px"
+      />
+      <div
+        style="
+          width: 851px;
+          height: 385px;
+          display: flex;
+          justify-content: space-between;
+          margin-top: 244px;
+        "
+      >
+        <div style="width: 556px; height: 100%">
+          <h1 style="font-weight: 500; font-size: 62px">
+            <span style="font-weight: bold">Em 2024</span>, você escolheu o
+            método de pagamento <br />
+            que mais combina <br />
+            com você.
+          </h1>
+        </div>
+        <div id="logoContainer"></div>
+      </div>
+      <div
+        style="
+          width: 497px;
+          height: 466px;
+          margin-top: 114px;
+          margin-left: 330px;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <div style="width: 412px; height: 62px">
+          <h1 style="font-weight: bold; font-size: 50px">Método favorito:</h1>
+        </div>
+        <div style="width: 469px; height: 147px">
+          <h1
+            style="font-weight: bold; font-size: 138px"
+            id="paymentMethodStories"
+          >
+            [paymentMethodStories]
+          </h1>
+        </div>
+        <div style="width: 497px; height: 248px; margin-top: 10px">
+          <h1 style="font-weight: 500; font-size: 50px">
+            A sua comodidade é <br />
+            a nossa prioridade! Como você prefere, sempre.
+          </h1>
+        </div>
+      </div>
+    </div>
+    <script>
+      const primaryColor = getComputedStyle(document.documentElement)
+        .getPropertyValue("--primary-color")
+        .trim();
+
+      function loadAndModifySVG() {
+        const svgContainer = document.getElementById("svgContainer");
+
+        fetch("assets/story5/imgStory5.svg")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Erro ao carregar o SVG");
+            }
+            return response.text();
+          })
+          .then((svgData) => {
+            svgContainer.innerHTML = svgData;
+
+            const svgElement = svgContainer.querySelector("svg");
+
+            if (svgElement) {
+              svgElement.querySelectorAll("[fill]").forEach((element) => {
+                const currentFill = element.getAttribute("fill");
+                if (currentFill === "#0073F4") {
+                  element.setAttribute("fill", primaryColor);
+                }
+              });
+
+              svgElement.querySelectorAll("[style]").forEach((element) => {
+                const style = element.getAttribute("style");
+                if (style && style.includes("fill:")) {
+                  element.setAttribute(
+                    "style",
+                    style.replace(/fill: ?[^;]+;/, `fill: ${primaryColor};`)
+                  );
+                }
+              });
+            }
+          })
+          .catch((error) =>
+            console.error("Erro ao carregar e modificar o SVG:", error)
+          );
+      }
+
+      loadAndModifySVG();
+    </script>
+  </body>
+</html>

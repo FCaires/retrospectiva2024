@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Story 6</title>
+    <style>
+      :root {
+        --primary-color: #0073f4;
+      }
+      * {
+        padding: 0;
+        margin: 0;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="conteudo-compartilhamento"
+      style="
+        width: 1080px;
+        height: 1920px;
+        background-color: #0073f4;
+        font-family: Manrope, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      "
+    >
+      <img
+        src="assets/story6/Vector.png"
+        alt=""
+        style="position: absolute; margin-right: 400px"
+      />
+      <img
+        src="assets/story5/Group.png"
+        alt=""
+        style="position: absolute; margin-top: 220px; margin-right: 1260px"
+      />
+      <div
+        id="svgContainer"
+        style="position: absolute; margin-top: 426px"
+      ></div>
+      <img
+        src="assets/story6/arrow 1.png"
+        alt=""
+        style="position: absolute; margin-top: 865px; margin-left: 745px"
+      />
+      <img
+        src="assets/story6/Vector-1.png"
+        alt=""
+        style="position: absolute; margin-top: 1570px; margin-left: 275px"
+      />
+      <div
+        style="
+          width: 851px;
+          height: 154px;
+          margin-top: 244px;
+          display: flex;
+          justify-content: space-between;
+        "
+      >
+        <div style="width: 617px; height: 100%">
+          <h1 style="font-weight: 500; font-size: 62px">
+            O primeiro destino <br />
+            de 2024
+            <span style="font-weight: bold">foi especial!</span>
+          </h1>
+        </div>
+        <div id="logoContainer"></div>
+      </div>
+      <div style="width: 822px; height: 579px; margin-top: 607px">
+        <div style="width: 448px; height: 129px">
+          <h1 style="font-weight: 500; font-size: 50px">
+            Meu primeiro destino em <span style="font-weight: bold">2024:</span>
+          </h1>
+        </div>
+        <div style="width: 822px; height: 231px">
+          <h1
+            style="font-weight: bold; font-size: 62px"
+            id="firstDestinationStories"
+          >
+            [firstDestinationStories]
+          </h1>
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 80px;
+          "
+        >
+          <div style="width: 696px; height: 150px">
+            <h1 style="font-weight: 500; font-size: 40px; text-align: center">
+              Que este tenha sido apenas o <br />começo de muitas novas viagens
+              e descobertas com a gente!
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const primaryColor = getComputedStyle(document.documentElement)
+        .getPropertyValue("--primary-color")
+        .trim();
+
+      function loadAndModifySVG() {
+        const svgContainer = document.getElementById("svgContainer");
+
+        fetch("assets/story6/imgStory6.svg")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Erro ao carregar o SVG");
+            }
+            return response.text();
+          })
+          .then((svgData) => {
+            svgContainer.innerHTML = svgData;
+
+            const svgElement = svgContainer.querySelector("svg");
+
+            if (svgElement) {
+              svgElement.querySelectorAll("[fill]").forEach((element) => {
+                const currentFill = element.getAttribute("fill");
+                if (currentFill === "#0073F4") {
+                  element.setAttribute("fill", primaryColor);
+                }
+              });
+
+              svgElement.querySelectorAll("[style]").forEach((element) => {
+                const style = element.getAttribute("style");
+                if (style && style.includes("fill:")) {
+                  element.setAttribute(
+                    "style",
+                    style.replace(/fill: ?[^;]+;/, `fill: ${primaryColor};`)
+                  );
+                }
+              });
+            }
+          })
+          .catch((error) =>
+            console.error("Erro ao carregar e modificar o SVG:", error)
+          );
+      }
+
+      loadAndModifySVG();
+    </script>
+  </body>
+</html>
