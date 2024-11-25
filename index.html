@@ -9,6 +9,9 @@
       rel="stylesheet"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <title>Restrospectiva Mobapps 2024</title>
     <style>
@@ -436,14 +439,8 @@
                   height: 1920,
                 }).then((canvas) => {
                   const base64Image = canvas.toDataURL("image/png");
-                  const link = document.createElement("a");
-                  link.href = base64Image;
-                  link.download = downloadName;
-                  link.click();
-
                   document.body.removeChild(container);
-
-                  resolve();
+                  resolve({ id: storyId, image: base64Image });
                 });
               }, 1000);
             })
@@ -468,15 +465,23 @@
           "story5",
           "story6",
         ];
+        const zip = new JSZip();
 
         Promise.all(stories.map((story) => gerarImagemCompartilhamento(story)))
-          .then(() => {
+          .then((images) => {
+            images.forEach(({ id, image }, index) => {
+              const filename = `image_${index + 1}.png`;
+              zip.file(filename, image.split(",")[1], { base64: true });
+            });
+
+            return zip.generateAsync({ type: "blob" });
+          })
+          .then((content) => {
+            saveAs(content, "stories.zip");
             mostrarPopup();
           })
           .catch((error) => {
-            alert(
-              `Houve um problema ao carregar o conteúdo do ${story}. Por favor, tente novamente ou entre em contato com o suporte.`
-            );
+            alert(`Erro ao gerar imagens: ${error.message}`);
           })
           .finally(() => {
             button.classList.remove("loading");
