@@ -214,31 +214,31 @@
       document.getElementById("total-days").textContent = totalDay;
       document.getElementById("ratings").textContent = ratings;
 
-      function fetchVideoURL() {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            // COLOCAR O CAMINHO DO VIDEO
-            const videoURL = "./assets/videos/video-teste.mp4";
-            if (videoURL) {
-              resolve(videoURL);
-            } else {
-              reject("Vídeo não encontrado");
-            }
-          }, 1000);
-        });
-      }
-
-      function loadVideo(videoURL) {
+      function loadYouTubeVideo(videoId) {
         const container = document.getElementById("svgContainer");
         container.innerHTML = "";
 
-        const video = document.createElement("video");
-        video.width = 540;
-        video.height = 540;
-        video.controls = true;
-        video.src = videoURL;
+        const iframe = document.createElement("iframe");
+        iframe.width = 560;
+        iframe.height = 315;
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        iframe.title = "YouTube video player";
+        iframe.frameBorder = 0;
+        iframe.allow =
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        iframe.allowFullscreen = true;
 
-        container.appendChild(video);
+        container.appendChild(iframe);
+      }
+
+      function fetchVideoURL() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            // Substitua pelo ID do vídeo no YouTube
+            const videoId = "tgbNymZ7vqY";
+            resolve(videoId);
+          }, 1000);
+        });
       }
 
       function loadSVG() {
@@ -270,9 +270,9 @@
       }
 
       fetchVideoURL()
-        .then((videoURL) => {
-          if (videoURL) {
-            loadVideo(videoURL);
+        .then((videoId) => {
+          if (videoId) {
+            loadYouTubeVideo(videoId);
           } else {
             throw new Error("Vídeo não encontrado");
           }
