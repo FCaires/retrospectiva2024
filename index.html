@@ -640,7 +640,17 @@
             return zip.generateAsync({ type: "blob" });
           })
           .then((content) => {
-            saveAs(content, "stories.zip");
+
+            const blobUrl = URL.createObjectURL(content);
+            const a = document.createElement("a");
+            a.href = blobUrl;
+            a.download = "stories.zip";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Certifique-se de liberar o URL
+            URL.revokeObjectURL(blobUrl);
             mostrarPopup();
           })
           .catch((error) => {
