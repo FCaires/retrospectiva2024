@@ -114,7 +114,7 @@
             <h2>Agradecemos sua presença</h2>
             <p>Sua confiança é fundamental para nós!</p>
           </div>
-          <div class="days-info-card-2" id="svgContainer"></div>
+          <div class="days-info-card-2" id="videoContainer"></div>
           <div class="days-info-card-1">
             <img src="./assets/index/explorar.png" alt="" />
             <h2>Vamos explorar mais sobre suas experiências na plataforma!</h2>
@@ -215,7 +215,7 @@
       document.getElementById("ratings").textContent = ratings;
 
       function loadYouTubeVideo(videoId) {
-        const container = document.getElementById("svgContainer");
+        const container = document.getElementById("videoContainer");
         container.innerHTML = "";
 
         const iframe = document.createElement("iframe");
@@ -242,7 +242,7 @@
       }
 
       function loadSVG() {
-        const container = document.getElementById("svgContainer");
+        const container = document.getElementById("videoContainer");
         container.innerHTML = "";
 
         fetch("./assets/index/10594481_4482349.svg")
