@@ -308,6 +308,151 @@
         }
       }
 
+      // function gerarImagemCompartilhamento(storyId) {
+      //   return new Promise((resolve, reject) => {
+      //     const htmlPath = `${storyId}.html`;
+      //     const svgPath = `assets/${storyId}/imgStory${storyId.replace(
+      //       "story",
+      //       ""
+      //     )}.svg`;
+      //     const downloadName = `${storyId}-image.png`;
+
+      //     fetch(htmlPath)
+      //       .then(async (response) => {
+      //         if (!response.ok) {
+      //           throw new Error(
+      //             `Erro ao carregar ${htmlPath}: ${response.statusText}`
+      //           );
+      //         }
+      //         return await response.text();
+      //       })
+      //       .then((html) => {
+      //         const container = document.createElement("div");
+      //         container.style.position = "absolute";
+      //         container.style.top = "-9999px";
+      //         container.style.left = "-9999px";
+      //         container.style.width = "1080px";
+      //         container.style.height = "1920px";
+      //         container.style.overflow = "hidden";
+      //         container.style.zIndex = "-1";
+      //         document.body.appendChild(container);
+
+      //         const shadowRoot = container.attachShadow({ mode: "open" });
+
+      //         const wrapper = document.createElement("div");
+      //         wrapper.innerHTML = html;
+      //         shadowRoot.appendChild(wrapper);
+
+      //         const stylesheets = Array.from(
+      //           document.querySelectorAll("link[rel='stylesheet']")
+      //         );
+      //         stylesheets.forEach((stylesheet) => {
+      //           const link = document.createElement("link");
+      //           link.rel = "stylesheet";
+      //           link.href = stylesheet.href;
+      //           shadowRoot.appendChild(link);
+      //         });
+
+      //         wrapper.style.setProperty("--primary-color", primaryColor);
+      //         adicionarLogo(wrapper);
+      //         const svgContainer = wrapper.querySelector("#svgContainer");
+
+      //         if (svgContainer) {
+      //           fetch(svgPath)
+      //             .then((response) => {
+      //               if (!response.ok) {
+      //                 throw new Error(`Erro ao carregar o SVG: ${svgPath}`);
+      //               }
+      //               return response.text();
+      //             })
+      //             .then((svgData) => {
+      //               svgContainer.innerHTML = svgData;
+
+      //               const svgElement = svgContainer.querySelector("svg");
+
+      //               if (svgElement) {
+      //                 svgElement
+      //                   .querySelectorAll("[fill]")
+      //                   .forEach((element) => {
+      //                     const currentFill = element.getAttribute("fill");
+      //                     if (
+      //                       currentFill === "#0073F4" ||
+      //                       currentFill === "red"
+      //                     ) {
+      //                       element.setAttribute("fill", primaryColor);
+      //                     }
+      //                   });
+
+      //                 svgElement
+      //                   .querySelectorAll("[style]")
+      //                   .forEach((element) => {
+      //                     const style = element.getAttribute("style");
+      //                     if (style && style.includes("fill:")) {
+      //                       element.setAttribute(
+      //                         "style",
+      //                         style.replace(
+      //                           /fill: ?[^;]+;/,
+      //                           `fill: ${primaryColor};`
+      //                         )
+      //                       );
+      //                     }
+      //                   });
+      //               }
+      //             })
+      //             .catch((error) =>
+      //               console.error(
+      //                 `Erro ao carregar e modificar o SVG (${svgPath}):`,
+      //                 error
+      //               )
+      //             );
+      //         }
+
+      //         const conteudoCompartilhamento = wrapper.querySelector(
+      //           "#conteudo-compartilhamento"
+      //         );
+      //         if (conteudoCompartilhamento) {
+      //           conteudoCompartilhamento.style.backgroundColor = primaryColor;
+      //         }
+
+      //         const storiesData = {
+      //           totalRidesStories: "824",
+      //           totalKmStories: "5462",
+      //           totalRatingStories: "4,7",
+      //           totalDaysStories: "276",
+      //           paymentMethodStories: "Cartão",
+      //           firstDestinationStories:
+      //             "Av. Tancredo Neves, 148 - Caminho das Árvores, Salvador - BA, 41820-020.",
+      //         };
+
+      //         Object.entries(storiesData).forEach(([id, value]) => {
+      //           const element = wrapper.querySelector(`#${id}`);
+      //           if (element) {
+      //             element.innerText = value;
+      //           }
+      //         });
+
+      //         setTimeout(() => {
+      //           html2canvas(wrapper, {
+      //             useCORS: true,
+      //             scale: 1,
+      //             width: 1080,
+      //             height: 1920,
+      //           }).then((canvas) => {
+      //             const base64Image = canvas.toDataURL("image/png");
+      //             document.body.removeChild(container);
+      //             resolve({ id: storyId, image: base64Image });
+      //           });
+      //         }, 1000);
+      //       })
+      //       .catch((error) => {
+      //         alert(
+      //           `Houve um problema ao carregar o conteúdo da imagem ${storyId}. Por favor, tente novamente ou entre em contato com o suporte.`
+      //         );
+      //         reject(error);
+      //       });
+      //   });
+      // }
+
       function gerarImagemCompartilhamento(storyId) {
         return new Promise((resolve, reject) => {
           const htmlPath = `${storyId}.html`;
@@ -357,92 +502,110 @@
               adicionarLogo(wrapper);
               const svgContainer = wrapper.querySelector("#svgContainer");
 
-              if (svgContainer) {
-                fetch(svgPath)
-                  .then((response) => {
-                    if (!response.ok) {
-                      throw new Error(`Erro ao carregar o SVG: ${svgPath}`);
-                    }
-                    return response.text();
-                  })
-                  .then((svgData) => {
-                    svgContainer.innerHTML = svgData;
+              const carregarSVG = () => {
+                return new Promise((resolveSVG, rejectSVG) => {
+                  if (svgContainer) {
+                    fetch(svgPath)
+                      .then((response) => {
+                        if (!response.ok) {
+                          throw new Error(`Erro ao carregar o SVG: ${svgPath}`);
+                        }
+                        return response.text();
+                      })
+                      .then((svgData) => {
+                        svgContainer.innerHTML = svgData;
 
-                    const svgElement = svgContainer.querySelector("svg");
+                        const svgElement = svgContainer.querySelector("svg");
 
-                    if (svgElement) {
-                      svgElement
-                        .querySelectorAll("[fill]")
-                        .forEach((element) => {
-                          const currentFill = element.getAttribute("fill");
-                          if (
-                            currentFill === "#0073F4" ||
-                            currentFill === "red"
-                          ) {
-                            element.setAttribute("fill", primaryColor);
-                          }
-                        });
+                        if (svgElement) {
+                          svgElement
+                            .querySelectorAll("[fill]")
+                            .forEach((element) => {
+                              const currentFill = element.getAttribute("fill");
+                              if (
+                                currentFill === "#0073F4" ||
+                                currentFill === "red"
+                              ) {
+                                element.setAttribute("fill", primaryColor);
+                              }
+                            });
 
-                      svgElement
-                        .querySelectorAll("[style]")
-                        .forEach((element) => {
-                          const style = element.getAttribute("style");
-                          if (style && style.includes("fill:")) {
-                            element.setAttribute(
-                              "style",
-                              style.replace(
-                                /fill: ?[^;]+;/,
-                                `fill: ${primaryColor};`
-                              )
-                            );
-                          }
-                        });
-                    }
-                  })
-                  .catch((error) =>
-                    console.error(
-                      `Erro ao carregar e modificar o SVG (${svgPath}):`,
-                      error
-                    )
-                  );
-              }
-
-              const conteudoCompartilhamento = wrapper.querySelector(
-                "#conteudo-compartilhamento"
-              );
-              if (conteudoCompartilhamento) {
-                conteudoCompartilhamento.style.backgroundColor = primaryColor;
-              }
-
-              const storiesData = {
-                totalRidesStories: "824",
-                totalKmStories: "5462",
-                totalRatingStories: "4,7",
-                totalDaysStories: "276",
-                paymentMethodStories: "Cartão",
-                firstDestinationStories:
-                  "Av. Tancredo Neves, 148 - Caminho das Árvores, Salvador - BA, 41820-020.",
+                          svgElement
+                            .querySelectorAll("[style]")
+                            .forEach((element) => {
+                              const style = element.getAttribute("style");
+                              if (style && style.includes("fill:")) {
+                                element.setAttribute(
+                                  "style",
+                                  style.replace(
+                                    /fill: ?[^;]+;/,
+                                    `fill: ${primaryColor};`
+                                  )
+                                );
+                              }
+                            });
+                        }
+                        resolveSVG();
+                      })
+                      .catch((error) => {
+                        console.error(
+                          `Erro ao carregar e modificar o SVG (${svgPath}):`,
+                          error
+                        );
+                        rejectSVG(error);
+                      });
+                  } else {
+                    resolveSVG();
+                  }
+                });
               };
 
-              Object.entries(storiesData).forEach(([id, value]) => {
-                const element = wrapper.querySelector(`#${id}`);
-                if (element) {
-                  element.innerText = value;
-                }
-              });
+              carregarSVG()
+                .then(() => {
+                  const conteudoCompartilhamento = wrapper.querySelector(
+                    "#conteudo-compartilhamento"
+                  );
+                  if (conteudoCompartilhamento) {
+                    conteudoCompartilhamento.style.backgroundColor =
+                      primaryColor;
+                  }
 
-              setTimeout(() => {
-                html2canvas(wrapper, {
-                  useCORS: true,
-                  scale: 1,
-                  width: 1080,
-                  height: 1920,
-                }).then((canvas) => {
-                  const base64Image = canvas.toDataURL("image/png");
-                  document.body.removeChild(container);
-                  resolve({ id: storyId, image: base64Image });
+                  const storiesData = {
+                    totalRidesStories: "824",
+                    totalKmStories: "5462",
+                    totalRatingStories: "4,7",
+                    totalDaysStories: "276",
+                    paymentMethodStories: "Cartão",
+                    firstDestinationStories:
+                      "Av. Tancredo Neves, 148 - Caminho das Árvores, Salvador - BA, 41820-020.",
+                  };
+
+                  Object.entries(storiesData).forEach(([id, value]) => {
+                    const element = wrapper.querySelector(`#${id}`);
+                    if (element) {
+                      element.innerText = value;
+                    }
+                  });
+
+                  setTimeout(() => {
+                    html2canvas(wrapper, {
+                      useCORS: true,
+                      scale: 1,
+                      width: 1080,
+                      height: 1920,
+                    }).then((canvas) => {
+                      const base64Image = canvas.toDataURL("image/png");
+                      document.body.removeChild(container);
+                      resolve({ id: storyId, image: base64Image });
+                    });
+                  }, 1000);
+                })
+                .catch((error) => {
+                  alert(
+                    `Houve um problema ao carregar o conteúdo da imagem ${storyId}. Por favor, tente novamente ou entre em contato com o suporte.`
+                  );
+                  reject(error);
                 });
-              }, 1000);
             })
             .catch((error) => {
               alert(
