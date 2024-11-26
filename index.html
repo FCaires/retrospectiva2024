@@ -640,17 +640,16 @@
             return zip.generateAsync({ type: "blob" });
           })
           .then((content) => {
-
             const blobUrl = URL.createObjectURL(content);
-            const a = document.createElement("a");
-            a.href = blobUrl;
-            a.download = "stories.zip";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
 
-            // Certifique-se de liberar o URL
-            URL.revokeObjectURL(blobUrl);
+            // Abrir o ZIP em uma nova aba do navegador
+            window.open(blobUrl, "_blank");
+
+            // Liberar a URL temporária após um tempo para garantir que o arquivo seja carregado
+            setTimeout(() => {
+              URL.revokeObjectURL(blobUrl);
+            }, 10000);
+
             mostrarPopup();
           })
           .catch((error) => {
