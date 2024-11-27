@@ -8,10 +8,7 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/FileSaver.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="scripts/html2canvas.min.js"></script>
 
     <title>Restrospectiva Mobapps 2024</title>
     <style>
@@ -173,7 +170,7 @@
           <button
             class="btn"
             id="shareButton"
-            onclick="gerarMultiplosStories()"
+            onclick="generateMultipleStories()"
           >
             Compartilhe nas suas redes sociais >
           </button>
@@ -185,10 +182,10 @@
       <div class="popup-content">
         <h2>Imagens geradas com sucesso!</h2>
         <p>Compartilhe nas suas redes sociais e inspire outras pessoas!</p>
-        <button onclick="fecharPopup()">Fechar</button>
+        <button onclick="closePopup()">Fechar</button>
       </div>
     </div>
-    <div id="popup-overlay" class="popup-overlay" onclick="fecharPopup()"></div>
+    <div id="popup-overlay" class="popup-overlay" onclick="closePopup()"></div>
 
     <script>
       const root = document.documentElement;
@@ -285,17 +282,17 @@
           loadSVG();
         });
 
-      function mostrarPopup() {
+      function showPopup() {
         document.getElementById("popup").classList.add("show");
         document.getElementById("popup-overlay").classList.add("show");
       }
 
-      function fecharPopup() {
+      function closePopup() {
         document.getElementById("popup").classList.remove("show");
         document.getElementById("popup-overlay").classList.remove("show");
       }
 
-      function adicionarLogo(wrapper) {
+      function addLogo(wrapper) {
         const logoContainer = wrapper.querySelector("#logoContainer");
         if (logoContainer) {
           const logoImg = document.createElement("img");
@@ -308,7 +305,7 @@
         }
       }
 
-      function gerarImagemCompartilhamento(storyId) {
+      function generateSharingImage(storyId) {
         const button = document.getElementById("shareButton");
         button.classList.add("loading");
 
@@ -357,7 +354,7 @@
               });
 
               wrapper.style.setProperty("--primary-color", primaryColor);
-              adicionarLogo(wrapper);
+              addLogo(wrapper);
               const svgContainer = wrapper.querySelector("#svgContainer");
 
               const carregarSVG = () => {
@@ -452,17 +449,16 @@
                       width: 1080,
                       height: 1920,
                     }).then((canvas) => {
-                      const base64Image = canvas.toDataURL("image/png");
                       document.body.removeChild(container);
-                      resolve({ id: storyId, image: base64Image });
+                      resolve({
+                        id: storyId,
+                        image: getBase64FromCanvas(canvas),
+                      });
                     });
                   }, 1000);
                 })
                 .catch((error) => {
-                  console.log(
-                    `Houve um problema ao carregar o conteúdo da imagem ${storyId}. Por favor, tente novamente ou entre em contato com o suporte.`
-                  );
-                  alert(
+                  console.error(
                     `Houve um problema ao carregar o conteúdo da imagem ${storyId}. Por favor, tente novamente ou entre em contato com o suporte.`
                   );
                   button.classList.remove("loading");
@@ -470,8 +466,7 @@
                 });
             })
             .catch((error) => {
-              console.log(`Erro ao gerar imagens: ${error.message}`);
-              alert(
+              console.error(
                 `Houve um problema ao carregar o conteúdo da imagem ${storyId}. Por favor, tente novamente ou entre em contato com o suporte.`
               );
               button.classList.remove("loading");
@@ -480,8 +475,13 @@
         });
       }
 
-      function gerarMultiplosStories() {
-        console.log("Entrou na função gerarMultiplosStories 10");
+      function getBase64FromCanvas(canvas) {
+        const dataURL = canvas.toDataURL("image/png");
+        const base64 = dataURL.split(",")[1];
+        return base64;
+      }
+
+      function generateMultipleStories() {
         const button = document.getElementById("shareButton");
         button.classList.add("loading");
 
@@ -502,9 +502,7 @@
           }
         );
 
-        console.log(JSON.stringify(vars));
-
-        Promise.all(stories.map((story) => gerarImagemCompartilhamento(story)))
+        Promise.all(stories.map((story) => generateSharingImage(story)))
           .then((images) => {
             try {
               images.forEach(({ id, image }) => {
@@ -513,31 +511,27 @@
 
               const base64ImageJSON = JSON.stringify(base64ImagesArray);
 
-              console.log(JSON.stringify(vars));
-
               switch (vars["device"]) {
                 case "flutter":
-                  window.flutter.postMessage(base64ImageJSON);
-                  break;
-
-                case "android":
-                  window.Android.onResult(base64ImageJSON);
+                  window.flutter.postMessage({
+                    action: "onResult",
+                    data: base64ImageJSON,
+                  });
                   break;
 
                 default:
-                  console.log(base64ImageJSON);
+                  window.Android.onResult(base64ImageJSON);
                   break;
               }
 
-              mostrarPopup();
+              showPopup();
             } catch (error) {
-              console.error("Erro no processamento dos resultados:", error);
+              console.error("Erro no processamento das imagens:", error);
               throw error;
             }
           })
           .catch((error) => {
-            console.log(`Erro ao gerar imagens: ${error.message}`);
-            alert(`Erro ao gerar imagens: ${error.message}`);
+            console.error(`Erro ao gerar imagens: ${error.message}`);
             button.classList.remove("loading");
           })
           .finally(() => {
