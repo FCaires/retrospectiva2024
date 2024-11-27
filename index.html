@@ -167,11 +167,7 @@
           </div>
         </div>
         <div class="footer-btn-content">
-          <button
-            class="btn"
-            id="shareButton"
-            onclick="generateMultipleStories()"
-          >
+          <button class="btn" id="shareButton" onclick="sendBase64ToApp()">
             Compartilhe nas suas redes sociais >
           </button>
         </div>
@@ -187,6 +183,22 @@
     </div>
     <div id="popup-overlay" class="popup-overlay" onclick="closePopup()"></div>
 
+    <div id="popupLoading" class="popup">
+      <div class="popup-content">
+        <h2>Sua retrospectiva está quase pronta!</h2>
+        <p>
+          Estamos reunindo os melhores momentos do seu ano. Isso pode levar
+          alguns instantes, mas valerá a pena!
+        </p>
+        <button onclick="closePopupLoading()">Cancelar</button>
+      </div>
+    </div>
+    <div
+      id="popup-overlayLoading"
+      class="popup-overlay"
+      onclick="closePopupLoading()"
+    ></div>
+
     <script>
       const root = document.documentElement;
       const username = "Pedro";
@@ -200,6 +212,7 @@
         "Av. Tancredo Neves, 148 - Caminho das Árvores, Salvador - BA, 41820-020";
       const totalDay = "1.350";
       const ratings = "4,9";
+      const base64ImagesArray = [];
 
       document.getElementById("username-display").textContent = username;
       document.getElementById("username-display2").textContent = username;
@@ -211,21 +224,41 @@
       document.getElementById("total-days").textContent = totalDay;
       document.getElementById("ratings").textContent = ratings;
 
+      function changePrimaryColor(newColor) {
+        const root = document.documentElement;
+        root.style.setProperty("--primary-color", newColor);
+      }
+
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      const primaryColorFromUrl = getQueryParam("primaryColor");
+      if (primaryColorFromUrl) {
+        changePrimaryColor(primaryColorFromUrl);
+      }
+
       function loadYouTubeVideo(videoId) {
-        const container = document.getElementById("videoContainer");
-        container.innerHTML = "";
+        return new Promise((resolve, reject) => {
+          const container = document.getElementById("videoContainer");
+          container.innerHTML = "";
 
-        const iframe = document.createElement("iframe");
-        iframe.width = 560;
-        iframe.height = 315;
-        iframe.src = `https://www.youtube.com/embed/${videoId}`;
-        iframe.title = "YouTube video player";
-        iframe.frameBorder = 0;
-        iframe.allow =
-          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-        iframe.allowFullscreen = true;
+          const iframe = document.createElement("iframe");
+          iframe.width = 560;
+          iframe.height = 315;
+          iframe.src = `https://www.youtube.com/embed/${videoId}`;
+          iframe.title = "YouTube video player";
+          iframe.frameBorder = 0;
+          iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          iframe.allowFullscreen = true;
 
-        container.appendChild(iframe);
+          iframe.onload = () => resolve();
+          iframe.onerror = (error) => reject(error);
+
+          container.appendChild(iframe);
+        });
       }
 
       function fetchVideoURL() {
@@ -259,11 +292,14 @@
               .querySelectorAll('[style*="fill"]')
               .forEach((element) => {
                 if (element.style.fill === "red") {
-                  element.style.fill = primaryColor;
+                  element.style.fill = primaryColorFromUrl;
                 }
               });
           })
-          .catch((error) => console.error("Erro ao carregar o SVG:", error));
+          .catch((error) => console.error("Erro ao carregar o SVG:", error))
+          .finally(() => {
+            generateMultipleStories();
+          });
       }
 
       fetchVideoURL()
@@ -280,6 +316,9 @@
             error
           );
           loadSVG();
+        })
+        .finally(() => {
+          generateMultipleStories();
         });
 
       function showPopup() {
@@ -290,6 +329,18 @@
       function closePopup() {
         document.getElementById("popup").classList.remove("show");
         document.getElementById("popup-overlay").classList.remove("show");
+      }
+
+      function showPopupLoading() {
+        document.getElementById("popupLoading").classList.add("show");
+        document.getElementById("popup-overlayLoading").classList.add("show");
+      }
+
+      function closePopupLoading() {
+        document.getElementById("popupLoading").classList.remove("show");
+        document
+          .getElementById("popup-overlayLoading")
+          .classList.remove("show");
       }
 
       function addLogo(wrapper) {
@@ -306,9 +357,6 @@
       }
 
       function generateSharingImage(storyId) {
-        const button = document.getElementById("shareButton");
-        button.classList.add("loading");
-
         return new Promise((resolve, reject) => {
           const htmlPath = `${storyId}.html`;
           const svgPath = `assets/${storyId}/imgStory${storyId.replace(
@@ -353,7 +401,7 @@
                 shadowRoot.appendChild(link);
               });
 
-              wrapper.style.setProperty("--primary-color", primaryColor);
+              wrapper.style.setProperty("--primary-color", primaryColorFromUrl);
               addLogo(wrapper);
               const svgContainer = wrapper.querySelector("#svgContainer");
 
@@ -381,7 +429,10 @@
                                 currentFill === "#0073F4" ||
                                 currentFill === "red"
                               ) {
-                                element.setAttribute("fill", primaryColor);
+                                element.setAttribute(
+                                  "fill",
+                                  primaryColorFromUrl
+                                );
                               }
                             });
 
@@ -394,7 +445,7 @@
                                   "style",
                                   style.replace(
                                     /fill: ?[^;]+;/,
-                                    `fill: ${primaryColor};`
+                                    `fill: ${primaryColorFromUrl};`
                                   )
                                 );
                               }
@@ -422,7 +473,7 @@
                   );
                   if (conteudoCompartilhamento) {
                     conteudoCompartilhamento.style.backgroundColor =
-                      primaryColor;
+                      primaryColorFromUrl;
                   }
 
                   const storiesData = {
@@ -441,7 +492,6 @@
                       element.innerText = value;
                     }
                   });
-
                   setTimeout(() => {
                     html2canvas(wrapper, {
                       useCORS: true,
@@ -483,8 +533,6 @@
 
       function generateMultipleStories() {
         const button = document.getElementById("shareButton");
-        button.classList.add("loading");
-
         const stories = [
           "story1",
           "story2",
@@ -493,14 +541,6 @@
           "story5",
           "story6",
         ];
-        const base64ImagesArray = [];
-        var vars = {};
-        var parts = window.location.href.replace(
-          /[?&]+([^=&]+)=([^&]*)/gi,
-          function (m, key, value) {
-            vars[key] = value;
-          }
-        );
 
         Promise.all(stories.map((story) => generateSharingImage(story)))
           .then((images) => {
@@ -508,23 +548,6 @@
               images.forEach(({ id, image }) => {
                 base64ImagesArray.push(image);
               });
-
-              const base64ImageJSON = JSON.stringify(base64ImagesArray);
-
-              switch (vars["device"]) {
-                case "flutter":
-                  window.flutter.postMessage({
-                    action: "onResult",
-                    data: base64ImageJSON,
-                  });
-                  break;
-
-                default:
-                  window.Android.onResult(base64ImageJSON);
-                  break;
-              }
-
-              showPopup();
             } catch (error) {
               console.error("Erro no processamento das imagens:", error);
               throw error;
@@ -532,11 +555,44 @@
           })
           .catch((error) => {
             console.error(`Erro ao gerar imagens: ${error.message}`);
-            button.classList.remove("loading");
           })
           .finally(() => {
             button.classList.remove("loading");
           });
+      }
+
+      function sendBase64ToApp() {
+        if (base64ImagesArray.length > 0) {
+          var vars = {};
+          var parts = window.location.href.replace(
+            /[?&]+([^=&]+)=([^&]*)/gi,
+            function (m, key, value) {
+              vars[key] = value;
+            }
+          );
+          const base64ImageJSON = JSON.stringify(base64ImagesArray);
+
+          switch (vars["device"]) {
+            case "flutter":
+              window.flutter.postMessage({
+                action: "onResult",
+                data: base64ImageJSON,
+              });
+              break;
+
+            case "android":
+              window.Android.onResult(base64ImageJSON);
+              break;
+
+            default:
+              console.log(base64ImagesArray);
+              break;
+          }
+
+          showPopup();
+        } else {
+          showPopupLoading();
+        }
       }
     </script>
   </body>

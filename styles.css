@@ -604,7 +604,7 @@
 }
 
 .popup-content button {
-  background: #0073f4;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -612,10 +612,6 @@
   cursor: pointer;
   font-size: 16px;
   transition: background 0.2s;
-}
-
-.popup-content button:hover {
-  background: #005bb5;
 }
 
 .popup-overlay {
