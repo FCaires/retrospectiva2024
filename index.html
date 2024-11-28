@@ -167,7 +167,7 @@
           </div>
         </div>
         <div class="footer-btn-content">
-          <button class="btn" id="shareButton" onclick="sendBase64ToApp()">
+          <button class="btn" id="shareButton" onclick="handleButtonClick()">
             Compartilhe nas suas redes sociais >
           </button>
         </div>
@@ -283,7 +283,7 @@
           })
           .catch((error) => console.error("Erro ao carregar o SVG:", error))
           .finally(() => {
-            generateMultipleStories();
+            generateMultipleStories(["story1", "story2", "story3"]);
           });
       }
 
@@ -303,7 +303,7 @@
           loadSVG();
         })
         .finally(() => {
-          generateMultipleStories();
+          generateMultipleStories(["story1", "story2", "story3"]);
         });
 
       function showPopup() {
@@ -514,33 +514,16 @@
         return base64;
       }
 
-      function generateMultipleStories() {
-        const button = document.getElementById("shareButton");
-        const stories = [
-          "story1",
-          "story2",
-          "story3",
-          "story4",
-          "story5",
-          "story6",
-        ];
-
-        Promise.all(stories.map((story) => generateSharingImage(story)))
+      function generateMultipleStories(stories) {
+        return Promise.all(stories.map((story) => generateSharingImage(story)))
           .then((images) => {
-            try {
-              images.forEach(({ id, image }) => {
-                base64ImagesArray.push(image);
-              });
-            } catch (error) {
-              console.error("Erro no processamento das imagens:", error);
-              throw error;
-            }
+            images.forEach(({ id, image }) => {
+              base64ImagesArray.push(image);
+            });
           })
           .catch((error) => {
             console.error(`Erro ao gerar imagens: ${error.message}`);
-          })
-          .finally(() => {
-            button.classList.remove("loading");
+            throw error;
           });
       }
 
@@ -571,11 +554,24 @@
               console.log(base64ImageJSON);
               break;
           }
-
           showPopup();
         } else {
           showPopupLoading();
         }
+      }
+
+      function handleButtonClick() {
+        const remainingStories = ["story4", "story5", "story6"];
+        const button = document.getElementById("shareButton");
+        button.classList.add("loading");
+
+        generateMultipleStories(remainingStories)
+          .then(() => {
+            sendBase64ToApp();
+          })
+          .finally(() => {
+            button.classList.remove("loading");
+          });
       }
     </script>
   </body>
