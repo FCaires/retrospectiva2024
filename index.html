@@ -6,9 +6,10 @@
     <link rel="stylesheet" href="styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
+      rel="stylesheets"
     />
     <script src="scripts/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
 
     <title>Restrospectiva Mobapps 2024</title>
     <style>
@@ -202,9 +203,6 @@
     <script>
       const root = document.documentElement;
       const username = "Pedro";
-      const primaryColor = getComputedStyle(root)
-        .getPropertyValue("--primary-color")
-        .trim();
       const totalRides = "50";
       const totalKm = "1.200";
       const paymentMethod = "cartão de crédito";
@@ -234,7 +232,7 @@
         return urlParams.get(param);
       }
 
-      const primaryColorFromUrl = getQueryParam("primaryColor");
+      const primaryColorFromUrl = getQueryParam("primaryColor") || "#0073f4";
       if (primaryColorFromUrl) {
         changePrimaryColor(primaryColorFromUrl);
       }
@@ -265,7 +263,7 @@
         return new Promise((resolve) => {
           setTimeout(() => {
             // Substitua pelo ID do vídeo no YouTube
-            const videoId = "tgbNymZ7vqY";
+            const videoId = "37rV1ZbM6zg";
             resolve(videoId);
           }, 1000);
         });
@@ -402,9 +400,10 @@
               });
 
               wrapper.style.setProperty("--primary-color", primaryColorFromUrl);
-              addLogo(wrapper);
-              const svgContainer = wrapper.querySelector("#svgContainer");
 
+              addLogo(wrapper);
+
+              const svgContainer = wrapper.querySelector("#svgContainer");
               const carregarSVG = () => {
                 return new Promise((resolveSVG, rejectSVG) => {
                   if (svgContainer) {
@@ -466,8 +465,10 @@
                 });
               };
 
+              // Carregar o SVG e depois gerar a imagem
               carregarSVG()
                 .then(() => {
+                  // Alterar cor de fundo do conteúdo
                   const conteudoCompartilhamento = wrapper.querySelector(
                     "#conteudo-compartilhamento"
                   );
@@ -476,6 +477,7 @@
                       primaryColorFromUrl;
                   }
 
+                  // Definir dados fictícios (se necessário)
                   const storiesData = {
                     totalRidesStories: "824",
                     totalKmStories: "5462",
@@ -492,34 +494,54 @@
                       element.innerText = value;
                     }
                   });
+
                   setTimeout(() => {
-                    html2canvas(wrapper, {
-                      useCORS: true,
-                      scale: 1,
-                      width: 1080,
-                      height: 1920,
-                    }).then((canvas) => {
-                      document.body.removeChild(container);
-                      resolve({
-                        id: storyId,
-                        image: getBase64FromCanvas(canvas),
+                    domtoimage
+                      .toPng(wrapper)
+                      .then((dataUrl) => {
+                        const canvas = document.createElement("canvas");
+                        const img = new Image();
+                        img.src = dataUrl;
+
+                        img.onload = () => {
+                          canvas.width = img.width;
+                          canvas.height = img.height;
+                          const ctx = canvas.getContext("2d");
+                          ctx.drawImage(img, 0, 0);
+                          document.body.removeChild(container);
+
+                          resolve({
+                            id: storyId,
+                            image: getBase64FromCanvas(canvas),
+                          });
+                        };
+                        img.onerror = (error) => {
+                          console.error(
+                            "Erro ao carregar imagem para conversão:",
+                            error
+                          );
+                          document.body.removeChild(container);
+                          reject(error);
+                        };
+                      })
+                      .catch((error) => {
+                        document.body.removeChild(container);
+                        reject(`Erro ao gerar a imagem: ${error}`);
                       });
-                    });
                   }, 1000);
                 })
                 .catch((error) => {
                   console.error(
-                    `Houve um problema ao carregar o conteúdo da imagem ${storyId}. Por favor, tente novamente ou entre em contato com o suporte.`
+                    `Erro ao carregar o conteúdo da imagem ${storyId}.`,
+                    error
                   );
-                  button.classList.remove("loading");
+                  document.body.removeChild(container);
                   reject(error);
                 });
             })
             .catch((error) => {
-              console.error(
-                `Houve um problema ao carregar o conteúdo da imagem ${storyId}. Por favor, tente novamente ou entre em contato com o suporte.`
-              );
-              button.classList.remove("loading");
+              console.error(`Erro ao carregar o HTML: ${htmlPath}.`, error);
+              document.body.removeChild(container);
               reject(error);
             });
         });
