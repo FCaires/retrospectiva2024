@@ -8,7 +8,6 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheets"
     />
-    <script src="scripts/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
 
     <title>Restrospectiva Mobapps 2024</title>
@@ -298,10 +297,7 @@
                 }
               });
           })
-          .catch((error) => console.error("Erro ao carregar o SVG:", error))
-          .finally(() => {
-            // generateMultipleStories();
-          });
+          .catch((error) => console.error("Erro ao carregar o SVG:", error));
       }
 
       fetchVideoURL()
@@ -469,10 +465,8 @@
                 });
               };
 
-              // Carregar o SVG e depois gerar a imagem
               carregarSVG()
                 .then(() => {
-                  // Alterar cor de fundo do conteúdo
                   const conteudoCompartilhamento = wrapper.querySelector(
                     "#conteudo-compartilhamento"
                   );
@@ -481,7 +475,6 @@
                       primaryColorFromUrl;
                   }
 
-                  // Definir dados fictícios (se necessário)
                   const storiesData = {
                     totalRidesStories: "824",
                     totalKmStories: "5462",
@@ -590,7 +583,7 @@
       }
 
       function sendBase64ToApp() {
-        if (base64ImagesArray.length > 0) {
+        if (base64ImagesArray.length === 6) {
           var vars = {};
           var parts = window.location.href.replace(
             /[?&]+([^=&]+)=([^&]*)/gi,
@@ -602,10 +595,12 @@
 
           switch (vars["device"]) {
             case "flutter":
-              window.flutter.postMessage({
-                action: "onResult",
-                data: base64ImageJSON,
-              });
+              window.flutter.postMessage(
+                JSON.stringify({
+                  action: "onResult",
+                  data: base64ImagesArray,
+                })
+              );
               break;
 
             case "android":
@@ -618,6 +613,9 @@
           }
 
           showPopup();
+        } else {
+          showPopupLoading();
+          generateMultipleStories();
         }
       }
     </script>
