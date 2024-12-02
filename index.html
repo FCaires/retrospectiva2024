@@ -43,6 +43,15 @@
           </div>
         </div>
       </div>
+      <div class="footer-btn-content">
+        <button
+          class="btn"
+          id="shareButton"
+          onclick="generateMultipleStories()"
+        >
+          Compartilhe nas suas redes sociais >
+        </button>
+      </div>
       <div class="rides-content">
         <h1>
           Você fez um total de
@@ -236,6 +245,8 @@
       }
 
       const primaryColorFromUrl = getQueryParam("primaryColor") || "#0073f4";
+      const userIdFromUrl = getQueryParam("userId") || "USERDEFAULT";
+
       if (primaryColorFromUrl) {
         changePrimaryColor(primaryColorFromUrl);
       }
@@ -553,33 +564,51 @@
       function generateMultipleStories() {
         const button = document.getElementById("shareButton");
         button.classList.add("loading");
-        const stories = [
-          "story1",
-          "story2",
-          "story3",
-          "story4",
-          "story5",
-          "story6",
-        ];
 
-        Promise.all(stories.map((story) => generateSharingImage(story)))
-          .then((images) => {
-            try {
-              images.forEach(({ id, image }) => {
-                base64ImagesArray.push(image);
-              });
-              sendBase64ToApp();
-            } catch (error) {
-              console.error("Erro no processamento das imagens:", error);
-              throw error;
-            }
-          })
-          .catch((error) => {
-            console.error(`Erro ao gerar imagens: ${error.message}`);
-          })
-          .finally(() => {
-            button.classList.remove("loading");
-          });
+        const savedImages = JSON.parse(
+          localStorage.getItem(`${userIdFromUrl}-IMAGES`)
+        );
+
+        if (savedImages?.length) {
+          base64ImagesArray.length = 0;
+          base64ImagesArray.push(...savedImages);
+          button.classList.remove("loading");
+          sendBase64ToApp();
+          return;
+        } else {
+          const stories = [
+            "story1",
+            "story2",
+            "story3",
+            "story4",
+            "story5",
+            "story6",
+          ];
+
+          Promise.all(stories.map((story) => generateSharingImage(story)))
+            .then((images) => {
+              try {
+                images.forEach(({ id, image }) => {
+                  base64ImagesArray.push(image);
+                });
+                localStorage.setItem(
+                  `${userIdFromUrl}-IMAGES`,
+                  JSON.stringify(base64ImagesArray)
+                );
+
+                sendBase64ToApp();
+              } catch (error) {
+                console.error("Erro no processamento das imagens:", error);
+                throw error;
+              }
+            })
+            .catch((error) => {
+              console.error(`Erro ao gerar imagens: ${error.message}`);
+            })
+            .finally(() => {
+              button.classList.remove("loading");
+            });
+        }
       }
 
       function sendBase64ToApp() {
@@ -592,7 +621,6 @@
             }
           );
           const base64ImageJSON = JSON.stringify(base64ImagesArray);
-
           switch (vars["device"]) {
             case "flutter":
               window.flutter.postMessage(
@@ -603,16 +631,13 @@
               );
               break;
 
-            case "android":
-              window.Android.onResult(base64ImageJSON);
-              break;
-
             default:
-              console.log(base64ImagesArray);
+              window.Android.onResult(base64ImageJSON);
               break;
           }
 
           showPopup();
+          base64ImagesArray.length = 0;
         } else {
           showPopupLoading();
           generateMultipleStories();
